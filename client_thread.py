@@ -2,6 +2,7 @@ import sys
 import socket
 import logging
 import time
+import threading
 
 def kirim_data():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -26,11 +27,16 @@ def kirim_data():
     finally:
         logging.warning("closing")
         sock.close()
+        
+def create_thread():
+    t = threading.Thread(target=kirim_data)
+    t.start()
+    t.join()
 
 if __name__=='__main__':
     total_requests = 0  # Add a counter for total requests
     start_time = time.time()  # Get the starting time
     while time.time() - start_time < 10:  # Run the loop for 10 seconds
-        kirim_data()
+        create_thread()
         total_requests += 1  # Increment the counter for each request
     logging.warning(f"Total requests sent: {total_requests}")
